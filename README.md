@@ -1,6 +1,6 @@
 ## Group 59 - Image Prior Reproduction
 
-![](https://github.com/DL59/ImagePrior/blob/master/imagepriortitle.png)
+![](imagepriortitle.png)
 
 ### Markdown
 
