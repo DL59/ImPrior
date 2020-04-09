@@ -1,8 +1,6 @@
-## Welcome to GitHub Pages
+## Group 59 - Image Prior Reproduction
 
-You can use the [editor on GitHub](https://github.com/Image-Prior-Reproducibility-Project/ImagePrior/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![](https://github.com/DL59/ImagePrior/blob/master/imagepriortitle.png)
 
 ### Markdown
 
