@@ -52,10 +52,18 @@ class Model_Down(nn.Module):
         return x
 
 ```
+As we can see, based on the paper, the number of filters is 128 with a kernel size of 3. We incorporated the downsampling in the convolutional layer with stride of 2.
 
-Instead, we defined the upsampling blocks work as follows:
+Furthermore, we defined the upsampling blocks work as follows:
 ```python
 class Model_Up(nn.Module):
+    """
+    Convolutional (Upsampling) Blocks.
+
+    nu = Number of Filters
+    ku = Kernel size
+
+    """
     def __init__(self, in_channels = 132, nu = 128, ku = 3):
         super(Model_Up, self).__init__()
         self.bn1 = nn.BatchNorm2d(in_channels)
@@ -77,10 +85,11 @@ class Model_Up(nn.Module):
         x = self.conv2(x)
         x = self.bn3(x)
         x = self.relu(x)
-        x = F.interpolate(x, scale_factor = 2, mode = 'bilinear')
+        x = F.interpolate(x, scale_factor = 2, mode = 'bicubic')
         return x
 
 ```
+As before, the number of inner channels is 128 with kernel size of 3. 
 
 Meanwhile, we defined the skip blocks in the following way:
 ```python
@@ -98,6 +107,7 @@ class Model_Skip(nn.Module):
         return x
 ```
 
+Lastly, we defined the aggregate model as follows:
 ```python
 class Model(nn.Module):
     def __init__(self):
@@ -142,3 +152,7 @@ class Model(nn.Module):
         x = self.sigm(self.conv_out(x))
         return x
 ```
+For the skip-layers connections, we decided to use concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
+
+
+
