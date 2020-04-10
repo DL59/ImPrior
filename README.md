@@ -52,3 +52,49 @@ class Model_Down(nn.Module):
         return x
 
 ```
+
+Instead, we defined the upsampling blocks work as follows:
+```python
+class Model_Up(nn.Module):
+    def __init__(self, in_channels = 132, nu = 128, ku = 3):
+        super(Model_Up, self).__init__()
+        self.bn1 = nn.BatchNorm2d(in_channels)
+        self.padder = nn.ReflectionPad2d(1)
+        self.conv1 = nn.Conv2d(in_channels = in_channels, out_channels = nu, kernel_size = ku, stride = 1, padding = 0)
+        self.bn2 = nn.BatchNorm2d(nu)
+
+        self.conv2 =  nn.Conv2d(in_channels = nu, out_channels = nu, kernel_size = 1, stride = 1, padding = 0)
+        self.bn3 = nn.BatchNorm2d(nu)
+
+        self.relu = nn.LeakyReLU()
+
+    def forward(self,x):
+        x = self.bn1(x)
+        x = self.padder(x)
+        x = self.conv1(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn3(x)
+        x = self.relu(x)
+        x = F.interpolate(x, scale_factor = 2, mode = 'bilinear')
+        return x
+
+```
+
+Meanwhile, we defined the skip blocks in the following way:
+```python
+class Model_Skip(nn.Module):
+    def __init__(self,in_channels = 128 ,stride = 1 , ns = 4, ks = 1, padding = 0):
+        super(Model_Skip, self).__init__()
+        self.conv = nn.Conv2d(in_channels = in_channels, out_channels = ns, kernel_size = ks, stride = stride, padding = padding)
+        self.bn = nn.BatchNorm2d(ns)
+        self.relu = nn.LeakyReLU()
+
+    def forward(self,x):
+        x = self.conv(x)
+        x = self.bn(x)
+        x = self.relu(x)
+        return x
+```
+
