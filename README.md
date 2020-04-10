@@ -18,7 +18,7 @@ The network architecture consists of several convolutional downsampling blocks f
 
 We reimplemented this in Python 3, making use of the PyTorch framework. To do so, we separately defined one Module Class for each of these blocks. For the full source-code, you can download and experiment with the Jupyter Notebooks attached in the Notebooks directory of this Git repository.
 
-First of all, the downsampling blocks work as follows: (WIP: To be continued)
+First of all, the downsampling blocks work as follows: 
 
 ```python
 class Model_Down(nn.Module):
