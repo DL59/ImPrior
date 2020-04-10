@@ -98,3 +98,47 @@ class Model_Skip(nn.Module):
         return x
 ```
 
+```python
+class Model(nn.Module):
+    def __init__(self):
+        super(Model,self).__init__()
+        self.d1 = Model_Down(in_channels = 32)
+        self.d2 = Model_Down(in_channels = 128)
+        self.d3 = Model_Down(in_channels = 128)
+        self.d4 = Model_Down(in_channels = 128)
+        self.d5 = Model_Down(in_channels = 128)
+
+        self.s1 = Model_Skip()
+        self.s2 = Model_Skip()
+        self.s3 = Model_Skip()
+        self.s4 = Model_Skip()
+        self.s5 = Model_Skip()
+
+        self.u5 = Model_Up(in_channels = 4)
+        self.u4 = Model_Up()
+        self.u3 = Model_Up()
+        self.u2 = Model_Up()
+        self.u1 = Model_Up()
+
+        self.conv_out = nn.Conv2d(128,3,1,padding = 0)
+        self.sigm = nn.Sigmoid()
+
+    def forward(self,x):
+        x = self.d1.forward(x)
+        s1 = self.s1.forward(x)
+        x = self.d2.forward(x)
+        s2 = self.s2.forward(x)
+        x = self.d3.forward(x)
+        s3 = self.s3.forward(x)
+        x = self.d4.forward(x)
+        s4 = self.s4.forward(x)
+        x = self.d5.forward(x)
+        s5 = self.s5.forward(x)
+        x = self.u5.forward(s5)
+        x = self.u4.forward(torch.cat([x,s4],axis = 1))
+        x = self.u3.forward(torch.cat([x,s3],axis = 1))
+        x = self.u2.forward(torch.cat([x,s2],axis = 1))
+        x = self.u1.forward(torch.cat([x,s1],axis = 1))
+        x = self.sigm(self.conv_out(x))
+        return x
+```
