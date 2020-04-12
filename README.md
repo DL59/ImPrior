@@ -89,11 +89,16 @@ class Model_Up(nn.Module):
         return x
 
 ```
-As before, the number of inner channels is 128 with kernel size of 3. 
+As before, the number of inner channels is 128 with kernel size of 3. Initially, we implemented the upsampling blocks using the bilinear upsampling. Nevertheless, we realized that for a high number of iterations (around 8000) the network sturcture performs better with bicubic upsampling.
 
 Meanwhile, we defined the skip blocks in the following way:
 ```python
 class Model_Skip(nn.Module):
+    """
+    Skip Connections
+    ns = Number of filters
+    ks = Kernel size
+    """
     def __init__(self,in_channels = 128 ,stride = 1 , ns = 4, ks = 1, padding = 0):
         super(Model_Skip, self).__init__()
         self.conv = nn.Conv2d(in_channels = in_channels, out_channels = ns, kernel_size = ks, stride = stride, padding = padding)
@@ -154,5 +159,24 @@ class Model(nn.Module):
 ```
 For the skip-layers connections, we decided to use concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
 
+In order to analyze the image correctly and succed in the inpainting task, we needed to preprocess the original image and the mask. Indeed, our code takes as inputs the original image and the mask that needs to be placed on it. First of all, the images have been converted to numerical arrays and their sizes have been adjusted in such a way that they were compatible. Furthermore, the two numpy arrays have been converted to PyTorch tensors. The masked image will then be given by the normalized multiplication of the torch tensors corresponding to the masked image and the original one.
+
+```python
+im = Image.open('kate.png')
+maskim = Image.open('kate_mask.png')
+im = im.convert('RGB')
+maskim = maskim.convert('1')
+im_np = np.array(im)
+mask_np = np.array(maskim,dtype = float)
+mask_np = (np.repeat(mask_np[:,:,np.newaxis], 3, axis = 2)/255)
+fig, ax = plt.subplots(figsize=(10,10))
+plt.imshow(im_np*mask_np)
+mask_tensor = torch.from_numpy(mask_np).permute(2,0,1)
+im_tensor = torch.from_numpy(im_np).permute(2,0,1)
+im_masked_tensor = (mask_tensor*im_tensor).unsqueeze(0)/255
+mask_tensor = mask_tensor.unsqueeze(0)
+im_masked_tensor = torch.tensor(im_masked_tensor)
+mask_tensor = torch.tensor(mask_tensor)
+```
 
 
