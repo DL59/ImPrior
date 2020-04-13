@@ -52,7 +52,7 @@ class Model_Down(nn.Module):
         return x
 
 ```
-As we can see, based on the paper, the number of filters is 128 with a kernel size of 3. We incorporated the downsampling in the convolutional layer with stride of 2.
+As we can see, based on the papers default architecture, we default set the number of filters to 128 with a kernel size of 3. We incorporated the downsampling in the convolutional layer with by using the implemented strides of 2. This is also what the authors describe in the supplementary materials.
 
 Furthermore, we defined the upsampling blocks work as follows:
 ```python
@@ -89,7 +89,8 @@ class Model_Up(nn.Module):
         return x
 
 ```
-As before, the number of inner channels is 128 with kernel size of 3. Initially, we implemented the upsampling blocks using the bilinear upsampling. Nevertheless, we realized that for a high number of iterations (around 8000) the network sturcture performs better with bicubic upsampling.
+The input channels have to match the number of output channels from the last upsampling block plus the number of output channels of the skip connections (since we concatenate the skip connections with the upsampling blocks, for an explanation see the ambiguity section). In the default architecture, this will always be 132, but can of course be manually defined differently, when needed. Initially, we implemented the upsampling blocks using the bilinear upsampling. Nevertheless, we realized that for a high number of iterations (around 8000) the network sturcture performs better with bicubic upsampling.
+The upscaling factor of 2 is chosen to match the stride 2 downsampling. This way, we obtain an output image of the same width and height as the input noise.
 
 Meanwhile, we defined the skip blocks in the following way:
 ```python
@@ -152,9 +153,12 @@ class Model(nn.Module):
         return x
 
 ```
-For the skip-layers connections, we decided to use concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
 
-In order to analyze the image correctly and succed in the inpainting task, we needed to preprocess the original image and the mask. Indeed, our code takes as inputs the original image and the mask that needs to be placed on it. First of all, the images have been converted to numerical arrays and their sizes have been adjusted in such a way that they were compatible. Furthermore, the two numpy arrays have been converted to PyTorch tensors. The masked image will then be given by the normalized multiplication of the torch tensors corresponding to the masked image and the original one.
+
+In order to analyze the image correctly and succeed in the inpainting task, we needed to preprocess the original image and the mask. Indeed, our code takes as inputs the original image and the mask that needs to be placed on it. First of all, the images have been converted to numerical arrays and their sizes have been adjusted in such a way that they were compatible. Furthermore, the two numpy arrays have been converted to PyTorch tensors. The masked image will then be given by the normalized multiplication of the torch tensors corresponding to the masked image and the original one.
+
+
+
 
 ```python
 im = Image.open('kate.png')
@@ -174,6 +178,14 @@ im_tensor = torch.from_numpy(im_np).permute(2,0,1)
 im_masked_tensor = ((mask_tensor*im_tensor).unsqueeze(0)/255).cuda()
 mask_tensor = mask_tensor.unsqueeze(0).cuda()
 ```
+
+Add main loop here!
+
+# Ambiguities
+
+* For the skip-layers connections, we decided to use  concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
+
+
 
 ## Results
 
