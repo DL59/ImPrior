@@ -18,7 +18,7 @@ The network architecture consists of several convolutional downsampling blocks f
 
 We reimplemented this in Python 3, making use of the PyTorch framework. To do so, we separately defined one Module Class for each of these blocks. For the full source-code, you can download and experiment with the Jupyter Notebooks attached in the Notebooks directory of this Git repository.
 
-First of all, the downsampling blocks work as follows: 
+First of all, the downsampling blocks work as follows:
 
 ```python
 class Model_Down(nn.Module):
@@ -115,47 +115,42 @@ class Model_Skip(nn.Module):
 Lastly, we defined the aggregate model as follows:
 ```python
 class Model(nn.Module):
-    def __init__(self):
+    def __init__(self, length = 5, in_channels = 32, nu = [128,128,128,128,128] , nd =
+                    [128,128,128,128,128], ns = [4,4,4,4,4], ku = [3,3,3,3,3], kd = [3,3,3,3,3], ks = [1,1,1,1,1]):
         super(Model,self).__init__()
-        self.d1 = Model_Down(in_channels = 32)
-        self.d2 = Model_Down(in_channels = 128)
-        self.d3 = Model_Down(in_channels = 128)
-        self.d4 = Model_Down(in_channels = 128)
-        self.d5 = Model_Down(in_channels = 128)
+        assert length == len(nu), 'Hyperparameters do not match network depth.'
 
-        self.s1 = Model_Skip()
-        self.s2 = Model_Skip()
-        self.s3 = Model_Skip()
-        self.s4 = Model_Skip()
-        self.s5 = Model_Skip()
+        self.length = length
 
-        self.u5 = Model_Up(in_channels = 4)
-        self.u4 = Model_Up()
-        self.u3 = Model_Up()
-        self.u2 = Model_Up()
-        self.u1 = Model_Up()
+        self.downs = nn.ModuleList([Model_Down(in_channels = nd[i-1], nd = nd[i], kd = kd[i]) if i != 0 else
+                                        Model_Down(in_channels = in_channels, nd = nd[i], kd = kd[i]) for i in range(self.length)])
 
-        self.conv_out = nn.Conv2d(128,3,1,padding = 0)
+        self.skips = nn.ModuleList([Model_Skip(in_channels = nd[i], ns = ns[i], ks = ks[i]) for i in range(self.length)])
+
+        self.ups = nn.ModuleList([Model_Up(in_channels = ns[i]+nu[i+1], nu = nu[i], ku = ku[i]) if i != self.length-1 else
+                                        Model_Up(in_channels = ns[i], nu = nu[i], ku = ku[i]) for i in range(self.length-1,-1,-1)]) #Elements ordered backwards
+
+        self.conv_out = nn.Conv2d(nu[0],3,1,padding = 0)
         self.sigm = nn.Sigmoid()
 
     def forward(self,x):
-        x = self.d1.forward(x)
-        s1 = self.s1.forward(x)
-        x = self.d2.forward(x)
-        s2 = self.s2.forward(x)
-        x = self.d3.forward(x)
-        s3 = self.s3.forward(x)
-        x = self.d4.forward(x)
-        s4 = self.s4.forward(x)
-        x = self.d5.forward(x)
-        s5 = self.s5.forward(x)
-        x = self.u5.forward(s5)
-        x = self.u4.forward(torch.cat([x,s4],axis = 1))
-        x = self.u3.forward(torch.cat([x,s3],axis = 1))
-        x = self.u2.forward(torch.cat([x,s2],axis = 1))
-        x = self.u1.forward(torch.cat([x,s1],axis = 1))
-        x = self.sigm(self.conv_out(x))
+        s = [] #Skip Activations
+
+        #Downpass
+        for i in range(self.length):
+            x = self.downs[i].forward(x)
+            s.append(self.skips[i].forward(x))
+
+        #Uppass
+        for i in range(self.length):
+            if (i == 0):
+                x = self.ups[i].forward(s[-1])
+            else:
+                x = self.ups[i].forward(torch.cat([x,s[self.length-1-i]],axis = 1))
+
+        x = self.sigm(self.conv_out(x)) #Squash to RGB ([0,1]) format
         return x
+
 ```
 For the skip-layers connections, we decided to use concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
 
@@ -178,5 +173,3 @@ mask_tensor = mask_tensor.unsqueeze(0)
 im_masked_tensor = torch.tensor(im_masked_tensor)
 mask_tensor = torch.tensor(mask_tensor)
 ```
-
-
