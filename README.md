@@ -179,8 +179,53 @@ im_masked_tensor = ((mask_tensor*im_tensor).unsqueeze(0)/255).cuda()
 mask_tensor = mask_tensor.unsqueeze(0).cuda()
 ```
 
-Add main loop here!
 
+The main loop follows the standard Pytorch conventions. The only difference here is that the input to the loss function must be carefully chosen to prevent cheating. We are only allowed to compute the loss on the masked pixels, which ensures that we do not need the original image to begin with. To ensure this, we just multiply the mask with the original image before we pass it to the loss function. The input is, as suggested by the authors, a uniformly generated tensor with mean 0.05.
+
+```python
+#Initialize model params
+z = (0.1) * torch.rand((1,32,512,512), device = "cuda")
+
+#Meshgrid Input
+#sym = np.arange(0,512)
+#xv, yv = np.meshgrid(sym,sym)
+#xv = xv/(255.0)
+#yv = yv/(255.0)
+#z =np.stack([xv,yv])
+#z = torch.from_numpy(z)
+#z = torch.tensor(z.unsqueeze(0), device = 'cuda', dtype = torch.float32)
+
+
+#Initialize the Model
+net = Model() #Using standard architecture, no hyperparams specified
+optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
+
+use_gpu = torch.cuda.is_available()
+
+if use_gpu:
+    net = net.cuda()
+
+
+#Main Training Loop
+for epoch in range(500):
+    optimizer.zero_grad()
+    output = net.forward(z)
+    loss = F.mse_loss(output*mask_tensor, im_masked_tensor)
+
+    if (epoch % 250 == 0):
+      print('EPOCH: ' + str(epoch))
+      print('LOSS: ' + str(loss.item()), end ='\n\n')
+      plt.imshow(output.cpu().view(3,512,512).permute(1,2,0).detach().numpy())
+      plt.show()
+
+    loss.backward()
+    optimizer.step()
+
+    z = z + (1/(30))*torch.randn_like(z) #Regularization
+
+plt.imshow(output.cpu().view(3,512,512).permute(1,2,0).detach().numpy())
+
+```
 # Ambiguities
 
 * For the skip-layers connections, we decided to use  concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
