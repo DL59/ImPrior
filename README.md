@@ -179,5 +179,6 @@ mask_tensor = mask_tensor.unsqueeze(0).cuda()
 
 Test
 
-![](Data/Results/kate_masked.png)
-![](Data/Results/kateout.png)
+Corrputed                |  Deep Image Prior
+:----------------------------:|:-----------------------------:
+![](Data/Results/kate_masked.png)  |  ![](Data/Results/kateout.png)
