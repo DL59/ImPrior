@@ -159,17 +159,18 @@ In order to analyze the image correctly and succed in the inpainting task, we ne
 ```python
 im = Image.open('kate.png')
 maskim = Image.open('kate_mask.png')
-im = im.convert('RGB')
 maskim = maskim.convert('1')
+
 im_np = np.array(im)
 mask_np = np.array(maskim,dtype = float)
 mask_np = (np.repeat(mask_np[:,:,np.newaxis], 3, axis = 2)/255)
+
 fig, ax = plt.subplots(figsize=(10,10))
 plt.imshow(im_np*mask_np)
+
 mask_tensor = torch.from_numpy(mask_np).permute(2,0,1)
 im_tensor = torch.from_numpy(im_np).permute(2,0,1)
-im_masked_tensor = (mask_tensor*im_tensor).unsqueeze(0)/255
-mask_tensor = mask_tensor.unsqueeze(0)
-im_masked_tensor = torch.tensor(im_masked_tensor)
-mask_tensor = torch.tensor(mask_tensor)
+
+im_masked_tensor = ((mask_tensor*im_tensor).unsqueeze(0)/255).cuda()
+mask_tensor = mask_tensor.unsqueeze(0).cuda()
 ```
