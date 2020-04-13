@@ -174,3 +174,10 @@ im_tensor = torch.from_numpy(im_np).permute(2,0,1)
 im_masked_tensor = ((mask_tensor*im_tensor).unsqueeze(0)/255).cuda()
 mask_tensor = mask_tensor.unsqueeze(0).cuda()
 ```
+
+## Results
+
+Test
+
+![](Data/Results/kate_masked.png)
+![](Data/Results/kateout.png)
