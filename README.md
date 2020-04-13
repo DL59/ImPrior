@@ -179,6 +179,10 @@ mask_tensor = mask_tensor.unsqueeze(0).cuda()
 
 Test
 
-Corrputed                |  Deep Image Prior
+|Corrupted                |  Deep Image Prior |
 :----------------------------:|:-----------------------------:
 ![](Data/Results/kate_masked.png)  |  ![](Data/Results/kateout.png)
+![](Data/Results/kategrade1.jpeg)  |  ![](Data/Results/kategrade1_result.jpeg)
+![](Data/Results/kategrade2.jpeg)  |  ![](Data/Results/kategrade2_result.jpeg)
+![](Data/Results/kategrade3.jpeg)  |  ![](Data/Results/kategrade3_result.jpeg)
+![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
