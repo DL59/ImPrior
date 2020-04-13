@@ -186,7 +186,6 @@ Add main loop here!
 * For the skip-layers connections, we decided to use  concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
 
 
-
 ## Results
 
 We reconstructed the original inpainting task on an image of Kate (at least that is what the authors called the image file so we'll call her Kate as well). We seem to be getting comparable results, although our architecture seems to benefit from a few more iterations. Furthermore, we also bombarded Kate with large holes to see how much the Deep Image Prior can reconstruct. Obviously this is an almost impossible task, but the network still seems to be able to recover (quite remarkably) some traits of the original image.
@@ -201,8 +200,10 @@ We reconstructed the original inpainting task on an image of Kate (at least that
 
 # Alternative images
 
+For these images, we did not do any hyperparameter tuning. Instead we used the standard architecture to see what we get. Surprisingly, inpainting seems to work quite well on a variety of images, although the output is always a little bit blurrier than the original image. To alleviate this issue, more training iterations help. We did not use more than 6000 iterations for any of these images.
 
 |Corrupted                |  Deep Image Prior |
 :----------------------------:|:-----------------------------:
 ![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
 ![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
+![](Data/Results/ewi_masked.png)  |  ![](Data/Results/ewi_out.png)
