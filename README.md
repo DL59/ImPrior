@@ -186,3 +186,4 @@ Test
 ![](Data/Results/kategrade2.jpeg)  |  ![](Data/Results/kategrade2_result.jpeg)
 ![](Data/Results/kategrade3.jpeg)  |  ![](Data/Results/kategrade3_result.jpeg)
 ![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
+![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
