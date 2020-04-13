@@ -206,3 +206,4 @@ For these images, we did not do any hyperparameter tuning. Instead we used the s
 :----------------------------:|:-----------------------------:
 ![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
 ![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
+![](Data/Results/ewi_masked.png)  |  ![](Data/Results/ewi_out.png)
