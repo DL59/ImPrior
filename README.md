@@ -177,7 +177,7 @@ mask_tensor = mask_tensor.unsqueeze(0).cuda()
 
 ## Results
 
-Test
+We reconstructed the original inpainting task on an image of Kate (at least that is what the authors called the image file so we'll call her Kate as well). We seem to be getting comparable results, although our architecture seems to benefit from a few more iterations. Furthermore, we also bombarded Kate with large holes to see how much the Deep Image Prior can reconstruct. Obviously this is an almost impossible task, but the network still seems to be able to recover (quite remarkably) some traits of the original image.
 
 |Corrupted                |  Deep Image Prior |
 :----------------------------:|:-----------------------------:
@@ -185,5 +185,12 @@ Test
 ![](Data/Results/kategrade1.jpeg)  |  ![](Data/Results/kategrade1_result.jpeg)
 ![](Data/Results/kategrade2.jpeg)  |  ![](Data/Results/kategrade2_result.jpeg)
 ![](Data/Results/kategrade3.jpeg)  |  ![](Data/Results/kategrade3_result.jpeg)
+
+
+# Alternative images
+
+
+|Corrupted                |  Deep Image Prior |
+:----------------------------:|:-----------------------------:
 ![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
 ![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
