@@ -113,7 +113,7 @@ class Model_Skip(nn.Module):
         return x
 ```
 
-Lastly, we defined the aggregate model as follows:
+Then, the final network can be easily defined, by concatenating the modular building blocks together in the same way as described in the figure above.
 ```python
 class Model(nn.Module):
     def __init__(self, length = 5, in_channels = 32, nu = [128,128,128,128,128] , nd =
@@ -155,10 +155,9 @@ class Model(nn.Module):
 ```
 
 
+## Preprocessing (Inpainting)
+
 In order to analyze the image correctly and succeed in the inpainting task, we needed to preprocess the original image and the mask. Indeed, our code takes as inputs the original image and the mask that needs to be placed on it. First of all, the images have been converted to numerical arrays and their sizes have been adjusted in such a way that they were compatible. Furthermore, the two numpy arrays have been converted to PyTorch tensors. The masked image will then be given by the normalized multiplication of the torch tensors corresponding to the masked image and the original one.
-
-
-
 
 ```python
 im = Image.open('kate.png')
@@ -180,20 +179,24 @@ mask_tensor = mask_tensor.unsqueeze(0).cuda()
 ```
 
 
+## Preprocessing (Restoration)
+
+The preprocessing steps used in the restoration task are very similar to the ones used in the inpainting task. Since the restoration task is to recover an image, where a certain percentage (e.g. 50%) of the original image pixels have been dropped, we simply initialized a sparse array with half of the entries being equal to 0 and used that as our mask in the same way as in the inpainting task.
+
+```python
+from scipy.sparse import random
+mask_np = random(512,512,0.5,dtype = bool).A.astype(float)
+```
+
+
+
+## Training the Model
+
 The main loop follows the standard Pytorch conventions. The only difference here is that the input to the loss function must be carefully chosen to prevent cheating. We are only allowed to compute the loss on the masked pixels, which ensures that we do not need the original image to begin with. To ensure this, we just multiply the mask with the original image before we pass it to the loss function. The input is, as suggested by the authors, a uniformly generated tensor with mean 0.05.
 
 ```python
 #Initialize model params
 z = (0.1) * torch.rand((1,32,512,512), device = "cuda")
-
-#Meshgrid Input
-#sym = np.arange(0,512)
-#xv, yv = np.meshgrid(sym,sym)
-#xv = xv/(255.0)
-#yv = yv/(255.0)
-#z =np.stack([xv,yv])
-#z = torch.from_numpy(z)
-#z = torch.tensor(z.unsqueeze(0), device = 'cuda', dtype = torch.float32)
 
 
 #Initialize the Model
@@ -207,7 +210,7 @@ if use_gpu:
 
 
 #Main Training Loop
-for epoch in range(500):
+for epoch in range(2000):
     optimizer.zero_grad()
     output = net.forward(z)
     loss = F.mse_loss(output*mask_tensor, im_masked_tensor)
@@ -226,12 +229,21 @@ for epoch in range(500):
 plt.imshow(output.cpu().view(3,512,512).permute(1,2,0).detach().numpy())
 
 ```
-# Ambiguities
+## Ambiguities
 
-* For the skip-layers connections, we decided to use  concatenative connections. Initially, we considered using the additive skip connection, but because of the dimensions and the results we decided that the concatenative ones were the best in this case.
+Here we will list some of the things that were not completely specified in the supplementary materials. For these implementation details, we either tested out multiple implementations and then took the best performing one or we simply used the implementation that seemed most reasonable to us. Some of these ambiguities are the following:
 
+* For the skip-layers connections, we decided to use  concatenative connections. Initially, we considered using the additive skip connections. However, this would not be compatible with their specified hyperparameters, since the number of output channels on the skip connections would not match the number of input channels in the upsampling modules. We nevertheless tried out both versions and came to the conclusion that the flexibility of freely choosing the amount of channels on the skip connections helps with preventing overfitting to the noise. Since this can only be achieved with concatenative skip connections, we chose to stick to them in the end.
 
-## Results
+* The input and its perturbations: The authors mention that they perturb the input at each iteration by small noise. However, this can be achieved in two different ways:
+  1. Initializing the input tensor before starting training and then in every iteration taking the initial tensor plus additive noise.
+  2. Initializing the input tensor before starting training and then in every iteration taking the previous input tensor plus additive noise.
+
+  We tried both versions, and both of them do work in their own way. However, despite our expectations being the other way round, the first version seems to be regularizing too much, whereas the second version does achieve better looking results, while still preventing overfitting to noise sufficiently.
+
+* Upsampling factor and Downsampling strides: It was not completely clear which strides were used in the downsampling process. Obviously, any stride is possible, as long as the dimensions of the image are large enough. However, this does change the performance of the network. Since for their standard architecture with a kernel size of 3 in the downsampling convolutional blocks and a stride of 2 in the first convolutional layer corresponds to exactly halving the image size for a 512x512 input, we went with that. This also makes the implementation a little bit less tedious, since one does not have to explicitly calculate the upscaling factor anymore.
+
+# Inpainting Results
 
 We reconstructed the original inpainting task on an image of Kate (at least that is what the authors called the image file so we'll call her Kate as well). We seem to be getting comparable results, although our architecture seems to benefit from a few more iterations. Furthermore, we also bombarded Kate with large holes to see how much the Deep Image Prior can reconstruct. Obviously this is an almost impossible task, but the network still seems to be able to recover (quite remarkably) some traits of the original image.
 
@@ -243,15 +255,41 @@ We reconstructed the original inpainting task on an image of Kate (at least that
 ![](Data/Results/kategrade3.jpeg)  |  ![](Data/Results/kategrade3_result.jpeg)
 
 
+
+
+# Restoration Results
+The authors of the paper test the restoration task on a variety of images, which can be found in the interactive display of the [Deep Image Prior Page](https://dmitryulyanov.github.io/deep_image_prior). A selection of them can be seen here:
+
+
+|Barbara                |  Man | Hill |
+:----------------:|:----------------:|:----------------:
+![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/barbara_GT.png)  |  ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/man_GT.png) | ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/hill_GT.png)
+
+|Boat                |  Couple | Lena |
+:----------------:|:----------------:|:----------------:
+![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/boat_GT.png)  |  ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/couple_GT.png) | ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/Lena512_GT.png)
+
+
+
+Regarding the PSNR scores of the respective images, we seem to be achieving comparable, and sometimes even higher scores than those mentioned in the paper. However, especially on the Barbara picture, we cannot seem to recover all the details just as well. This might be due to the architecture overfitting to the noise. Stopping the training process earlier than suggested in the paper does help with the picture quality and does not change the PSNR significantly though.
+
+
+
+The following table compares our PSNR scores with those reported in Table 1 of the original paper:
+
+|Architecture |Barbara|  Man | Lena | Boat | Hill | Couple
+:------:|:------:|:------:|:------:|:------:|:------:|:------:
+Ours | 32.519 | 32.234 | 35.078 | 32.930 | 33.032 | 32.390
+Theirs | 32.22 | 32.20 | 36.16| 33.06 | 32.77 | 32.52
+
 # Alternative images
 
 For these images, we did not do any hyperparameter tuning. Instead we used the standard architecture to see what we get. Surprisingly, inpainting seems to work quite well on a variety of images, although the output is always a little bit blurrier than the original image. To alleviate this issue, more training iterations help. We did not use more than 6000 iterations for any of these images.
 
-|Corrupted                |  Deep Image Prior |
-:----------------------------:|:-----------------------------:
-![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
-![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
-![](Data/Results/ewi_masked.png)  |  ![](Data/Results/ewi_out.png)
-![](Data/Results/wazowski_masked.png)  |  ![](Data/Results/wazowski_out.png)
+![](Data/Results/Altim1.png)
 
 Unlike the wind next to EWI, the inpainting result on the building did not really blow us away. The fine detail of the windows get blurred out significantly, especially in the areas behind the text.
+
+One additional application of the Deep Image Prior, which the authors have not thought of, is the restoration of memes and pictures of cats, cause why not:
+
+![](Data/Results/Altim2.png)
