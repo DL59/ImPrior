@@ -277,10 +277,10 @@ Regarding the PSNR scores of the respective images, we seem to be achieving comp
 
 The following table compares our PSNR scores with those reported in Table 1 of the original paper:
 
-|Architecture |Barbara|  Man | Lena |
-:------:|:------:|:------:|:------:
-Ours | 32.519 | 32.234 | 35.078
-Theirs | 32.22 | 32.20 | 36.16
+|Architecture |Barbara|  Man | Lena | Boat
+:------:|:------:|:------:|:------:|:------:
+Ours | 32.519 | 32.234 | 35.078 | 32.930
+Theirs | 32.22 | 32.20 | 36.16| 33.06
 
 # Alternative images
 
@@ -290,6 +290,6 @@ For these images, we did not do any hyperparameter tuning. Instead we used the s
 
 Unlike the wind next to EWI, the inpainting result on the building did not really blow us away. The fine detail of the windows get blurred out significantly, especially in the areas behind the text.
 
-One additional application of the Deep Image Prior, which the authors have not thought of, is the restoration of memes:
+One additional application of the Deep Image Prior, which the authors have not thought of, is the restoration of memes and pictures of cats. cause why not:
 
 ![](Data/Results/Altim2.png)
