@@ -288,14 +288,8 @@ For these images, we did not do any hyperparameter tuning. Instead we used the s
 
 ![](Data/Results/Altim1.png)
 
-
-# Backup
-
-|Corrupted                |  Deep Image Prior |
-:----------------------------:|:-----------------------------:
-![](Data/Results/catgrade.jpeg)  |  ![](Data/Results/catgrade_result.jpeg)
-![](Data/Results/VanGogh_masked.png)  |  ![](Data/Results/VanGogh_result.png)
-![](Data/Results/ewi_masked.png)  |  ![](Data/Results/ewi_out.png)
-![](Data/Results/wazowski_masked.png)  |  ![](Data/Results/wazowski_out.png)
-
 Unlike the wind next to EWI, the inpainting result on the building did not really blow us away. The fine detail of the windows get blurred out significantly, especially in the areas behind the text.
+
+One additional application of the Deep Image Prior, which the authors have not thought of, is the restoration of memes:
+
+![](Data/Results/Altim2.png)
