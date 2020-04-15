@@ -267,7 +267,7 @@ The authors of the paper test the restoration task on a variety of images, which
 
 |Boat                |  Couple | Lena |
 :----------------:|:----------------:|:----------------:
-![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/boat_GT.png)  |  ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/couple_GT.png) | ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/Lena512_deep_prior.png)
+![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/boat_GT.png)  |  ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/couple_GT.png) | ![](https://dmitryulyanov.github.io/assets/deep-image-prior/Reconstruction/Gray/50p/Lena512_GT.png)
 
 
 
@@ -275,7 +275,7 @@ Regarding the PSNR scores of the respective images, we seem to be achieving comp
 
 
 
-The following table compares our PSNR scores with those reported in Table 1 of the original paper: 
+The following table compares our PSNR scores with those reported in Table 1 of the original paper:
 
 |Architecture |Barbara|  Man | Lena |
 :------:|:------:|:------:|:------:
@@ -285,6 +285,11 @@ Theirs | 32.22 | 32.20 | 36.16
 # Alternative images
 
 For these images, we did not do any hyperparameter tuning. Instead we used the standard architecture to see what we get. Surprisingly, inpainting seems to work quite well on a variety of images, although the output is always a little bit blurrier than the original image. To alleviate this issue, more training iterations help. We did not use more than 6000 iterations for any of these images.
+
+![](Data/Results/Altim1.png)
+
+
+# Backup
 
 |Corrupted                |  Deep Image Prior |
 :----------------------------:|:-----------------------------:
