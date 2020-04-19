@@ -277,10 +277,10 @@ Regarding the PSNR scores of the respective images, we seem to be achieving comp
 
 The following table compares our PSNR scores with those reported in Table 1 of the original paper:
 
-|Architecture |Barbara|  Man | Lena | Boat | Hill | Couple
-:------:|:------:|:------:|:------:|:------:|:------:|:------:
-Ours | 32.519 | 32.234 | 35.078 | 32.930 | 33.032 | 32.390
-Theirs | 32.22 | 32.20 | 36.16| 33.06 | 32.77 | 32.52
+|Architecture |Barbara|  Man | Lena | Boat | Hill | Couple | Montage | Cameraman | Peppers | House | Fingerprint
+:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:
+Ours | **32.51** | **32.23** | **35.07** | 32.93 | **33.03** | 32.390 | **35.49** |  **33.31** | **33.71** | 34.73| 31.93
+Theirs | 32.22 | 32.20 | 36.16| **33.06** | 32.77 | **32.52** | 34.54 | 29.80 | 33.05 | **39.16** | **32.84**
 
 # Alternative images
 
