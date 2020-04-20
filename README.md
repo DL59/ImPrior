@@ -293,3 +293,7 @@ Unlike the wind next to EWI, the inpainting result on the building did not reall
 One additional application of the Deep Image Prior, which the authors have not thought of, is the restoration of memes and pictures of cats, cause why not:
 
 ![](Data/Results/Altim2.png)
+
+# Conclusion
+
+Overall, the Deep Image Prior paper seemed to be self-contained enough to make it easy to reproduce from scratch. The supplementary materials provided by the authors list almost all needed hyperparameters, which proved to work for not only their selection of pictures, but also on a wider variety of tasks (at the cost of some performance). We did, however, encounter some ambiguities, which made the reproduction more cumbersome.
