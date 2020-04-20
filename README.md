@@ -1,3 +1,9 @@
+## Authors
+
+* Markus Peschl
+* Cecilia Casolo
+* Mats Van Tongeren
+
 ## Introduction
 
 ![](imagepriortitle.png)
