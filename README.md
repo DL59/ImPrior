@@ -4,6 +4,10 @@
 * Cecilia Casolo
 * Mats Van Tongeren
 
+## Remark
+
+This blog has been submitted to [ https://reproducedpapers.org]( https://reproducedpapers.org), which features a collection of reproducibility attempts of papers in the field of Deep Learning by various people. If you are interested, feel free to check it out!
+
 ## Introduction
 
 ![](imagepriortitle.png)
