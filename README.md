@@ -296,4 +296,8 @@ One additional application of the Deep Image Prior, which the authors have not t
 
 # Conclusion
 
-Overall, the Deep Image Prior paper seemed to be self-contained enough to make it easy to reproduce from scratch. The supplementary materials provided by the authors list almost all needed hyperparameters, which proved to work for not only their selection of pictures, but also on a wider variety of tasks (at the cost of some performance). We did, however, encounter some ambiguities, which made the reproduction more cumbersome.
+The Deep Image Prior paper seemed to be self-contained enough to make it easy to reproduce from scratch. The supplementary materials provided by the authors list almost all needed hyperparameters, which proved to work for not only their selection of pictures, but also on a wider variety of tasks (at the cost of some performance). We did, however, encounter some ambiguities, which made the reproduction more cumbersome. Furthermore, on some restoration tasks we did sometimes not manage to achieve the same visual quality of images as presented in the paper.
+
+Overall, reproducibility wise, we would give the paper an **8.5/10** score.
+
+(Please note, that this score is merely subjective and could vary heavily depending on someone's background with the subject matter.)
